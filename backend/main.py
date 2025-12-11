@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from typing import List
 import shutil
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 
 from database import engine, get_db, Base
 from models import ProcurementRequest, OrderLine, StatusHistory
@@ -46,7 +46,7 @@ def create_request(request: schemas.ProcurementRequestCreate, db: Session = Depe
     if not request.commodity_group_id:
         classification = classify_commodity_group(
             request.title,
-            [line.dict() for line in request.order_lines]
+            [line.model_dump() for line in request.order_lines]
         )
         commodity_group_id = classification.get("commodity_group_id")
         commodity_group = classification.get("commodity_group")
@@ -69,7 +69,7 @@ def create_request(request: schemas.ProcurementRequestCreate, db: Session = Depe
 
     # Add order lines
     for line in request.order_lines:
-        db_line = OrderLine(**line.dict())
+        db_line = OrderLine(**line.model_dump())
         db_request.order_lines.append(db_line)
 
     # Add initial status history
@@ -116,7 +116,7 @@ def update_request_status(
 
     old_status = request.status
     request.status = status_update.new_status
-    request.updated_at = datetime.utcnow()
+    request.updated_at = datetime.now(timezone.utc)
 
     # Add status history
     status_hist = StatusHistory(
@@ -131,6 +131,53 @@ def update_request_status(
     db.refresh(request)
 
     return {"message": "Status updated successfully", "request": request}
+
+@app.get("/api/statistics")
+def get_statistics(db: Session = Depends(get_db)):
+    """Get dashboard statistics"""
+    from sqlalchemy import func
+
+    # Get all requests
+    all_requests = db.query(ProcurementRequest).all()
+    total_requests = len(all_requests)
+
+    # Status distribution
+    status_counts = db.query(
+        ProcurementRequest.status,
+        func.count(ProcurementRequest.id)
+    ).group_by(ProcurementRequest.status).all()
+
+    status_distribution = {status: count for status, count in status_counts}
+
+    # Commodity group breakdown
+    commodity_counts = db.query(
+        ProcurementRequest.commodity_group,
+        func.count(ProcurementRequest.id),
+        func.sum(ProcurementRequest.total_cost)
+    ).group_by(ProcurementRequest.commodity_group).all()
+
+    commodity_breakdown = [
+        {
+            "commodity_group": group or "Unclassified",
+            "count": count,
+            "total_value": float(total or 0)
+        }
+        for group, count, total in commodity_counts
+    ]
+
+    # Price statistics
+    total_cost = db.query(func.sum(ProcurementRequest.total_cost)).scalar() or 0
+    avg_cost = db.query(func.avg(ProcurementRequest.total_cost)).scalar() or 0
+
+    return {
+        "total_requests": total_requests,
+        "status_distribution": status_distribution,
+        "commodity_breakdown": commodity_breakdown,
+        "price_stats": {
+            "total_cost": float(total_cost),
+            "average_cost": float(avg_cost)
+        }
+    }
 
 @app.post("/api/upload-pdf", response_model=schemas.ExtractedData)
 async def upload_pdf(file: UploadFile = File(...)):

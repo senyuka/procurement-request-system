@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
 import './IntakeForm.css'
 
@@ -13,6 +13,19 @@ function IntakeForm() {
     department: '',
     total_cost: 0
   })
+
+  // Load profile data on component mount
+  useEffect(() => {
+    const savedProfile = localStorage.getItem('userProfile')
+    if (savedProfile) {
+      const profile = JSON.parse(savedProfile)
+      setFormData(prev => ({
+        ...prev,
+        requestor_name: profile.requestor_name || '',
+        department: profile.department || ''
+      }))
+    }
+  }, [])
 
   const [orderLines, setOrderLines] = useState([{
     position_description: '',
@@ -108,7 +121,8 @@ function IntakeForm() {
       setMessage({ type: 'success', text: 'PDF data extracted successfully!' })
     } catch (error) {
       console.error('Error uploading PDF:', error)
-      setMessage({ type: 'error', text: 'Error extracting PDF data. Please fill in manually.' })
+      const errorMessage = error.response?.data?.detail || error.message || 'Error extracting PDF data'
+      setMessage({ type: 'error', text: `${errorMessage}. Please fill in manually.` })
     } finally {
       setLoading(false)
     }

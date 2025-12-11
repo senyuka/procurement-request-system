@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import DashboardStats from './DashboardStats'
 import './Dashboard.css'
 
 const API_URL = 'http://localhost:8000/api'
@@ -10,6 +11,8 @@ function Dashboard() {
   const [filter, setFilter] = useState('All')
   const [selectedRequest, setSelectedRequest] = useState(null)
   const [updatingStatus, setUpdatingStatus] = useState(false)
+  const [refreshStats, setRefreshStats] = useState(0)
+  const [showStats, setShowStats] = useState(false)
 
   useEffect(() => {
     fetchRequests()
@@ -34,6 +37,7 @@ function Dashboard() {
         notes: `Status changed to ${newStatus}`
       })
       await fetchRequests()
+      setRefreshStats(prev => prev + 1) // Trigger stats refresh
       setSelectedRequest(null)
     } catch (error) {
       console.error('Error updating status:', error)
@@ -61,38 +65,47 @@ function Dashboard() {
   }
 
   return (
-    <div className="dashboard">
-      <div className="dashboard-header">
-        <h2>Procurement Requests Overview</h2>
-        <div className="filter-buttons">
-          <button
-            className={filter === 'All' ? 'active' : ''}
-            onClick={() => setFilter('All')}
-          >
-            All ({requests.length})
-          </button>
-          <button
-            className={filter === 'Open' ? 'active' : ''}
-            onClick={() => setFilter('Open')}
-          >
-            Open ({requests.filter(r => r.status === 'Open').length})
-          </button>
-          <button
-            className={filter === 'In Progress' ? 'active' : ''}
-            onClick={() => setFilter('In Progress')}
-          >
-            In Progress ({requests.filter(r => r.status === 'In Progress').length})
-          </button>
-          <button
-            className={filter === 'Closed' ? 'active' : ''}
-            onClick={() => setFilter('Closed')}
-          >
-            Closed ({requests.filter(r => r.status === 'Closed').length})
-          </button>
+    <div className="dashboard-container">
+      <div className="dashboard">
+        <div className="dashboard-header">
+          <div className="header-top">
+            <h2>Procurement Requests Overview</h2>
+            <button
+              className="toggle-stats-btn"
+              onClick={() => setShowStats(!showStats)}
+            >
+              {showStats ? '← Hide Statistics' : 'Show Statistics →'}
+            </button>
+          </div>
+          <div className="filter-buttons">
+            <button
+              className={filter === 'All' ? 'active' : ''}
+              onClick={() => setFilter('All')}
+            >
+              All ({requests.length})
+            </button>
+            <button
+              className={filter === 'Open' ? 'active' : ''}
+              onClick={() => setFilter('Open')}
+            >
+              Open ({requests.filter(r => r.status === 'Open').length})
+            </button>
+            <button
+              className={filter === 'In Progress' ? 'active' : ''}
+              onClick={() => setFilter('In Progress')}
+            >
+              In Progress ({requests.filter(r => r.status === 'In Progress').length})
+            </button>
+            <button
+              className={filter === 'Closed' ? 'active' : ''}
+              onClick={() => setFilter('Closed')}
+            >
+              Closed ({requests.filter(r => r.status === 'Closed').length})
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div className="requests-table">
+        <div className="requests-table">
         <table>
           <thead>
             <tr>
@@ -241,6 +254,8 @@ function Dashboard() {
           </div>
         </div>
       )}
+      </div>
+      {showStats && <DashboardStats refreshTrigger={refreshStats} />}
     </div>
   )
 }

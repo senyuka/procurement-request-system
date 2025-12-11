@@ -1,0 +1,156 @@
+.dashboard-stats {
+  background: white;
+  border-left: 1px solid #e5e7eb;
+  padding: 2rem 1.5rem;
+  min-width: 320px;
+  max-width: 320px;
+  overflow-y: auto;
+  height: calc(100vh - 60px);
+}
+
+.dashboard-stats h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 1.5rem 0;
+  letter-spacing: -0.025em;
+}
+
+.dashboard-stats h3 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 1rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stats-loading,
+.stats-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.stats-error {
+  color: #ef4444;
+}
+
+/* Stat Cards */
+.stat-card {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid #e5e7eb;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.025em;
+}
+
+/* Chart Section */
+.chart-section {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  padding: 1rem 0;
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Commodity Section */
+.commodity-section {
+  margin-top: 2rem;
+}
+
+.commodity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.commodity-item {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.commodity-item:hover {
+  border-color: #111827;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.commodity-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.commodity-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.25;
+}
+
+.commodity-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+}
+
+.commodity-count {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.commodity-value {
+  color: #111827;
+  font-weight: 700;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .dashboard-stats {
+    min-width: 280px;
+    max-width: 280px;
+  }
+}
+
+/* Recharts tooltip customization */
+.recharts-default-tooltip {
+  background: white !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 8px !important;
+  padding: 0.5rem !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+}
+
+.recharts-tooltip-label {
+  font-weight: 600 !important;
+  color: #111827 !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.recharts-tooltip-item {
+  color: #374151 !important;
+}

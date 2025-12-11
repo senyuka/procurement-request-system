@@ -30,7 +30,8 @@
 
 .nav-links {
   display: flex;
-  gap: 0.25rem;
+  gap: 0.5rem;
+  align-items: center;
 }
 
 .nav-links a {
@@ -46,6 +47,20 @@
 .nav-links a:hover {
   background-color: #f3f4f6;
   color: #111827;
+}
+
+/* Accent styling for the first nav link (New Request) */
+.nav-links a:first-child {
+  background-color: #111827;
+  color: white;
+  padding: 0.625rem 1.25rem;
+  font-weight: 600;
+}
+
+.nav-links a:first-child:hover {
+  background-color: #1f2937;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .container {

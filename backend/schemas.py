@@ -5,7 +5,7 @@ from datetime import datetime
 class OrderLineBase(BaseModel):
     position_description: str
     unit_price: float
-    amount: int
+    amount: float
     unit: str
     total_price: float
 

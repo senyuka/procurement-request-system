@@ -1,8 +1,5 @@
 #!/bin/bash
 
-echo "Starting askLio Procurement System..."
-echo ""
-
 # Check if backend virtual environment exists
 if [ ! -d "backend/venv" ]; then
     echo "Creating Python virtual environment..."
@@ -14,7 +11,7 @@ if [ ! -d "backend/venv" ]; then
     pip install -r requirements.txt
     cd ..
 else
-    echo "Virtual environment already exists"
+    echo "INFO: Virtual environment already exists"
 fi
 
 # Check if frontend dependencies are installed
@@ -24,13 +21,11 @@ if [ ! -d "frontend/node_modules" ]; then
     npm install
     cd ..
 else
-    echo "Frontend dependencies already installed"
+    echo INFO: "Frontend dependencies already installed"
 fi
 
 echo ""
-echo "======================================"
-echo "Starting Backend Server..."
-echo "======================================"
+echo "INFO: Starting Backend Server..."
 cd backend
 source venv/bin/activate
 python main.py &
@@ -38,20 +33,15 @@ BACKEND_PID=$!
 cd ..
 
 echo ""
-echo "======================================"
-echo "Starting Frontend Development Server..."
-echo "======================================"
+echo "INFO: Starting Frontend Development Server..."
 cd frontend
 npm run dev &
 FRONTEND_PID=$!
 cd ..
 
 echo ""
-echo "======================================"
 echo "askLio Procurement System is running!"
-echo "======================================"
 echo "Backend API: http://localhost:8000"
-echo "API Docs: http://localhost:8000/docs"
 echo "Frontend: http://localhost:5173"
 echo ""
 echo "Press Ctrl+C to stop both servers"

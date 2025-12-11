@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Text
 from sqlalchemy.orm import relationship
-from datetime import datetime
+from datetime import datetime, timezone
 from database import Base
 
 class ProcurementRequest(Base):
@@ -15,9 +15,9 @@ class ProcurementRequest(Base):
     commodity_group = Column(String, nullable=True)
     total_cost = Column(Float, nullable=False)
     department = Column(String, nullable=False)
-    status = Column(String, default="Open")  # Open, In Progress, Closed
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    status = Column(String, default="Open")  # Open, In Progress, Closed - as specified in the README.md
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     order_lines = relationship("OrderLine", back_populates="request", cascade="all, delete-orphan")
     status_history = relationship("StatusHistory", back_populates="request", cascade="all, delete-orphan")
@@ -30,7 +30,7 @@ class OrderLine(Base):
     request_id = Column(Integer, ForeignKey("procurement_requests.id"))
     position_description = Column(String, nullable=False)
     unit_price = Column(Float, nullable=False)
-    amount = Column(Integer, nullable=False)
+    amount = Column(Float, nullable=False)
     unit = Column(String, nullable=False)
     total_price = Column(Float, nullable=False)
 
@@ -44,7 +44,7 @@ class StatusHistory(Base):
     request_id = Column(Integer, ForeignKey("procurement_requests.id"))
     old_status = Column(String, nullable=True)
     new_status = Column(String, nullable=False)
-    changed_at = Column(DateTime, default=datetime.utcnow)
+    changed_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     notes = Column(Text, nullable=True)
 
     request = relationship("ProcurementRequest", back_populates="status_history")
