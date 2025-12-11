@@ -12,12 +12,10 @@ import schemas
 from ai_services import extract_text_from_pdf, extract_vendor_offer_data, classify_commodity_group
 from commodity_groups import get_commodity_groups
 
-# Create database tables
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="askLio Procurement API")
 
-# CORS middleware for React frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://localhost:3000"],
@@ -26,7 +24,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Ensure uploads directory exists
 os.makedirs("uploads", exist_ok=True)
 
 @app.get("/")

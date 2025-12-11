@@ -16,14 +16,11 @@ def extract_text_from_pdf(pdf_path: str) -> str:
             page_text = page.extract_text()
             if page_text:
                 text += page_text + "\n"
-    print(f"Extracted {len(text)} characters from PDF")
-    print(f"First 500 characters: {text[:500]}")
     return text
 
 def extract_vendor_offer_data(pdf_text: str) -> dict:
     """Use OpenAI to extract structured data from vendor offer text"""
 
-    # Check if API key is available
     if not openai.api_key or "your-api-key" in openai.api_key.lower():
         raise ValueError("No valid OpenAI API key found. Please set OPENAI_API_KEY in .env file")
 
@@ -64,7 +61,7 @@ Return ONLY valid JSON, no additional text.
     result = response.choices[0].message.content.strip()
     print(f"OpenAI response: {result[:200]}...")
 
-    # Remove markdown code blocks if present
+    # Remove markdown code blocks from the model response if present
     if result.startswith("```json"):
         result = result[7:]
     if result.startswith("```"):
@@ -79,10 +76,10 @@ Return ONLY valid JSON, no additional text.
 def classify_commodity_group(title: str, order_lines: list) -> dict:
     """Use OpenAI to classify the request into the correct commodity group"""
 
-    # Prepare commodity groups list for the prompt
+    # commodity groups list
     groups_text = "\n".join([f"{g['id']}: {g['category']} - {g['group']}" for g in COMMODITY_GROUPS])
 
-    # Prepare order lines description
+    # order lines description
     items_text = "\n".join([f"- {line.get('position_description', '')}" for line in order_lines])
 
     prompt = f"""
@@ -116,7 +113,6 @@ Return ONLY valid JSON, no additional text.
 
         result = response.choices[0].message.content.strip()
 
-        # Remove markdown code blocks if present
         if result.startswith("```json"):
             result = result[7:]
         if result.startswith("```"):

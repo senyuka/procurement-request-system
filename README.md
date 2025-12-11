@@ -5,7 +5,7 @@ Procurement request management system with AI-powered PDF extraction and commodi
 ## Features
 
 - Create procurement requests manually or upload vendor PDFs
-- AI extracts vendor info, order lines, and prices from PDFs (OpenAI GPT-4)
+- AI extracts vendor info, order lines, and prices from PDFs (OpenAI GPT-4 used through native SDK)
 - Automatic commodity group classification
 - Dashboard with status filtering (Open, In Progress, Closed)
 - Status history tracking
